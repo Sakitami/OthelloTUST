@@ -16,3 +16,28 @@
 ![Visual Studio下载页面](https://s2.loli.net/2022/02/23/pwiMzjxLBtGRF5D.png)
 
 ![EasyX下载页面](https://s2.loli.net/2022/02/23/n4tUNcoxBzyeRLh.png)
+
+## 通过git克隆
+
+如果您的系统是Windows，请安装Git。
+
+ -  git：[Click Here](https://git-scm.com/download/win)
+
+！[image.png](https://s2.loli.net/2022/02/23/slqh3ybymngvz2t.png)
+
+通过安装git保持默认选项(仅保留“next”)。
+
+然后，在开始菜单上打开“git bash”。
+
+使用“Git Config”(Git Config)在您的设备上注册您的GitHub帐户。
+
+```Bash
+git config  -  global user.email "you@example.com" ＃这是您的github帐户电子邮件。
+git config  -  global user.name "Your Name"        ＃这是您的GitHub帐户名称。
+```
+
+最后，使用`git clone`克隆这个项目。
+
+```Bash
+git clone https://github.com/sakitami/othellotust.git
+```
