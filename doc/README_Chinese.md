@@ -23,7 +23,7 @@
 
  -  git：[Click Here](https://git-scm.com/download/win)
 
-！[image.png](https://s2.loli.net/2022/02/23/slqh3ybymngvz2t.png)
+![image.png](https://s2.loli.net/2022/02/23/slqh3ybymngvz2t.png)
 
 通过安装git保持默认选项(仅保留“next”)。
 
