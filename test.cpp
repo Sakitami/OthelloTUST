@@ -2,10 +2,12 @@
 #include<easyx.h>                 // EasyX图形绘制
 #include<conio.h>
 #include<mmstream.h>              // 包含多媒体设备接口头文件
+#include "guide.c"                // 教程文本
 #pragma comment(lib,"winmm.lib")  // 加载静态库
 
 #define CLEARGREEN RGB(123,237,159)
 #define CLEARORANGE RGB(243,156,18)
+#define CLEARORANGERED RGB(230,126,34)
 
 
 int chessman(int x, int y, int player);
@@ -20,14 +22,29 @@ int chessman(int x, int y, int player)
 	if (player == 0) {
 		setfillcolor(BLACK);
 	}
-	else {
+	else if(player == 1) {
 		setfillcolor(WHITE);
 	}
-
+	else {
+		setlinestyle(PS_DOT, 5);
+		circle(x * 80 - 20, y * 80 - 20, 25);
+		return 1;
+	}
+	setlinestyle(PS_SOLID, 1);
+	setlinecolor(WHITE);
 	solidcircle(x * 80 - 20, y * 80 - 20, 30);
 	circle(x * 80 - 20, y * 80 - 20, 25);
 	return 0;
 }
+
+// 清空棋盘中的某位置的棋子(清除辅助棋子)
+int clearChessman(int x, int y)
+{
+	setfillcolor(CLEARGREEN);
+	solidcircle(x * 80 - 20, y * 80 - 20, 30);
+	return 0;
+}
+
 // 开始游戏界面绘制函数
 int playerShow() {
 	IMAGE player, titleBkground, step;
@@ -37,6 +54,7 @@ int playerShow() {
 	putimage(715, 30, &player);
 	settextcolor(BLACK);
 	setfillcolor(WHITE);
+	setlinecolor(WHITE);
 	fillroundrect(715, 170, 1015, 210,10,10);
 	settextstyle(20, 0, _T("黑体"), 0, 0, FW_BOLD, true, true, false, 0, 0, 0, 0, 0); // 设置字体样式
 	outtextxy(730, 180, "剩余时间：");
@@ -103,6 +121,7 @@ int checkerBoard()
 	char lineNumber[9] = "12345678";
 	setbkcolor(WHITE); cleardevice();                            // 设置背景颜色
 	setfillcolor(CLEARGREEN);settextcolor(CLEARGREEN);           // 设置填充及文字颜色
+	setlinestyle(PS_SOLID, 1); setlinecolor(WHITE);
 	settextstyle(20, 0, _T("黑体"));
 	fillroundrect(20, 20, 660, 660, 5, 5);                       // 加载棋盘背景
 	// 绘制棋盘格子及行列号
@@ -183,14 +202,147 @@ int playMain() {
 	return 0;
 }
 
+// 弹出窗口
+int guideWindow(char* guide_window, char* title_window, int type) {
+	HWND hnd = GetHWnd();
+	if (type == 0) {
+		MessageBox(hnd, guide_window, title_window, MB_OK);
+	}
+	else if (type == 1) {
+		return MessageBox(hnd, guide_window, "游戏提示", MB_OKCANCEL);
+	}
+
+	return 0;
+}
+
+// 检测鼠标消息
+int guideScanMouse(int leftx, int rightx, int upy, int bottomy, int type) {
+	ExMessage msg2;
+	IMAGE nextButton;
+	if (type) {
+	loadimage(&nextButton, "./image/next.png");
+	putimage(760, 550, &nextButton);
+	}
+
+	while (1) {
+		if (peekmessage(&msg2, EM_MOUSE)) {
+			switch (msg2.message) {
+			case WM_LBUTTONDOWN:
+				if (msg2.x >= leftx && msg2.x <= rightx && msg2.y >= upy && msg2.y <= bottomy) {
+					return 1;
+				}
+				/*if (msg2.x >= 760 && msg2.x <= 960 && msg2.y >= 550 && msg2.y <= 650) {
+					return 1;   // 执行操作
+				}*/
+			}
+		}
+	}
+
+	return 0;
+}
+
+
+// 游戏教程主函数
+int guideMain() {
+	IMAGE arrow;
+	char confirm[] = "确认要开始游戏教程吗？";
+	char titleConfirm[] = "游戏提示";
+	if (guideWindow(confirm, titleConfirm, 1) == IDCANCEL) {
+		return 1;
+	}
+	else{
+		for (int i = 1; i <= 4; i++) {
+		guideWindow(guideText(i), guideTitleText(i), 0);
+		}
+
+	}
+	playerShow();
+	setfillcolor(CLEARORANGERED);
+	fillrectangle(715, 300, 1015, 660);
+	settextcolor(WHITE);
+	settextstyle(20, 0, _T("黑体"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0); // 设置字体样式
+	setlinestyle(PS_SOLID, 7);
+	setlinecolor(CLEARORANGE);
+	roundrect(715, 30, 1015, 90, 10, 10);   // 绘制上方黑棋回合
+	setbkmode(TRANSPARENT);
+	loadimage(&arrow, "./image/LEFT.png");
+	setfillcolor(CLEARORANGERED);
+	fillrectangle(715, 300, 1015, 660);
+	setlinestyle(PS_DOT, 5);
+	chessman(4, 3, 2); chessman(3, 4, 2);
+	chessman(6, 5, 2); chessman(5, 6, 2);
+	outtextxy(730, 320, "左侧为游戏棋盘，您将在这里");
+	outtextxy(730, 340, "操作棋子。每次下棋前会有辅");
+	outtextxy(730, 360, "助提示，告知您应如何落子。");
+	outtextxy(730, 380, "每局游戏开始时，会有四颗固");
+	outtextxy(730, 400, "定棋子。");
+	putimage(830, 500, &arrow);
+	guideScanMouse(760, 960, 550, 650, 1);
+	loadimage(&arrow, "./image/UP.png");
+	setfillcolor(CLEARORANGERED);
+	setlinestyle(PS_SOLID, 7);
+	fillrectangle(715, 300, 1015, 660);
+	outtextxy(730, 320, "上侧棕色部分为当前玩家，被");
+	outtextxy(730, 340, "橙色框圈起的部分为下棋玩家");
+	outtextxy(730, 360, "。白色框表示所剩余的时间，");
+	outtextxy(730, 380, "每局游戏有10分钟的时间，当");
+	outtextxy(730, 400, "剩余时间为零时，游戏结束。");
+	putimage(830, 500, &arrow);
+	guideScanMouse(760, 960, 550, 650, 1);
+	loadimage(&arrow, "./image/LEFT.png");
+	setfillcolor(CLEARORANGERED);
+	setlinestyle(PS_SOLID, 7);
+	fillrectangle(715, 300, 1015, 660);	
+	putimage(830, 500, &arrow);
+	outtextxy(730, 320, "请点击左侧棋盘中的3D格子。");
+	guideScanMouse(260, 340, 180, 260, 0);
+	chessman(4, 3, 0); chessman(4, 4, 0);
+	clearChessman(3, 4); clearChessman(6, 5); clearChessman(5, 6);
+	loadimage(&arrow, "./image/UP.png");
+	setfillcolor(CLEARORANGERED);
+	setlinestyle(PS_SOLID, 7);
+	setlinecolor(CLEARORANGE);
+	fillrectangle(715, 300, 1015, 660);
+	playerShow();	
+	setlinestyle(PS_SOLID, 7);
+	setlinecolor(CLEARORANGE);
+	setfillcolor(CLEARORANGERED);
+	settextstyle(20, 0, _T("黑体"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0);
+	roundrect(715, 90, 1015, 150, 10, 10);
+	fillrectangle(715, 300, 1015, 660);
+	chessman(5, 3, 2); chessman(3, 5, 2); chessman(3, 3, 2);
+	outtextxy(730, 320, "恭喜！您成功的完成了第一步");
+	outtextxy(730, 340, "。上方的橙色框移动到了白棋");
+	outtextxy(730, 360, "的位置，这表示现在是白棋玩");
+	outtextxy(730, 380, "家的落子时间。我们看看白棋");
+	outtextxy(730, 400, "如何操作。");
+	putimage(830, 500, &arrow);
+	guideScanMouse(760, 960, 550, 650, 1);
+	chessman(3, 3, 1); clearChessman(5, 3); clearChessman(3, 5); chessman(4, 4, 1);
+	loadimage(&arrow, "./image/Correct.png");
+	setfillcolor(CLEARORANGERED);
+	setlinestyle(PS_SOLID, 7);
+	setlinecolor(CLEARORANGE);
+	fillrectangle(715, 300, 1015, 660);
+	outtextxy(730, 320, "恭喜！您已完成了本教程的所");
+	outtextxy(730, 340, "有内容。点击下面的“下一步");
+	outtextxy(730, 360, "”按钮即可退出本教程。");
+	putimage(830, 500, &arrow);
+	guideScanMouse(760, 960, 550, 650, 1);
+	return 0;
+}
+
 int main()
 {
-
-	initgraph(1024, 680);
-	checkerBoard();
 	
-	// 游戏菜单
-	switch (startMenu()) {
+	initgraph(1024, 680);
+	HWND title_Main = GetHWnd();
+	SetWindowText(title_Main, "Reversi黑白棋");  // 修改窗口标题
+	while (1) {
+		checkerBoard();
+
+		// 游戏菜单
+		switch (startMenu()) {
 		case 1:
 			mciSendString("open ./music/clickButton.mp3 alias Button", 0, 0, 0);
 			mciSendString("play Button", 0, 0, 0);
@@ -200,12 +352,15 @@ int main()
 		case 2:
 			mciSendString("open ./music/clickButton.mp3 alias Button", 0, 0, 0);
 			mciSendString("play Button", 0, 0, 0);
+			guideMain();
 			break;
 		case 3:
 			mciSendString("open ./music/clickButton.mp3 alias Button", 0, 0, 0);
 			mciSendString("play Button", 0, 0, 0);
 			break;
-	}
+		}
+}
+
 	getchar();
 	closegraph();
 	return 0;
