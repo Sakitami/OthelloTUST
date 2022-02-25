@@ -33,24 +33,3 @@ char* guideTitleText(int _step) {
 	}
 	return title1;
 }
-/*int guideGame(int _step2) {
-	switch (_step2) {
-		case 1:
-			setfillcolor(CLEARORANGERED);
-			fillrectangle(715, 300, 1015, 660);
-			circle(300, 220, 25);
-			circle(220, 300, 25);
-			circle(460, 380, 25);
-			circle(380, 460, 25);
-			outtextxy(730, 320, "左侧为游戏棋盘，您将在这里");
-			outtextxy(730, 340, "操作棋子。每次下棋前会有辅");
-			outtextxy(730, 360, "助提示，告知您应如何落子。");
-			outtextxy(730, 380, "每局游戏开始时，会有四颗固");
-			outtextxy(730, 400, "定棋子。");
-			break;
-		case 2:
-			break;
-	}
-
-	return 0;
-}*/

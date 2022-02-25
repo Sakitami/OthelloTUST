@@ -3,11 +3,18 @@
 #include<conio.h>
 #include<mmstream.h>              // 包含多媒体设备接口头文件
 #include "guide.c"                // 教程文本
+#include "function.c"
+#include "game.c"
+
 #pragma comment(lib,"winmm.lib")  // 加载静态库
 
 #define CLEARGREEN RGB(123,237,159)
 #define CLEARORANGE RGB(243,156,18)
 #define CLEARORANGERED RGB(230,126,34)
+
+#define BLACKPLAYER 0
+#define WHITEPLAYER 1
+#define AVAILABLE 2
 
 
 int chessman(int x, int y, int player);
@@ -17,12 +24,12 @@ int checkerBoard();
 int playMain();
 
 // 棋子生成函数
-int chessman(int x, int y, int player)
+int chessman(int x, int y, int player=2)
 {
-	if (player == 0) {
+	if (player == BLACKPLAYER) {
 		setfillcolor(BLACK);
 	}
-	else if(player == 1) {
+	else if(player == WHITEPLAYER) {
 		setfillcolor(WHITE);
 	}
 	else {
@@ -145,8 +152,8 @@ int checkerBoard()
 		}
 	}
 	// 绘制初始游戏棋子
-	chessman(4, 4, 1);chessman(5, 5, 1);
-	chessman(4, 5, 0);chessman(5, 4, 0);
+	chessman(4, 4, WHITEPLAYER);chessman(5, 5, WHITEPLAYER);
+	chessman(4, 5, BLACKPLAYER);chessman(5, 4, BLACKPLAYER);
 	putimage(700, 0, &settingBkground);
 	putimage(715, 30, &titleBkground);
 
@@ -154,7 +161,99 @@ int checkerBoard()
 	return 0;
 }
 
-// 游戏主函数s
+// 检测棋盘鼠标信息
+int gameScanMouse() {
+	ExMessage msg3;
+	while (1) {
+		if (peekmessage(&msg3, EM_MOUSE)) {
+			switch (msg3.message) {
+			case WM_LBUTTONDOWN:
+				if (msg3.y >= 20 && msg3.y <= 100) {
+					if (msg3.x >= 20 && msg3.x <= 100) return 11;
+					if (msg3.x >= 101 && msg3.x <= 180) return 12;
+					if (msg3.x >= 181 && msg3.x <= 260) return 13;
+					if (msg3.x >= 261 && msg3.x <= 340) return 14;
+					if (msg3.x >= 341 && msg3.x <= 420) return 15;
+					if (msg3.x >= 421 && msg3.x <= 500) return 16;
+					if (msg3.x >= 501 && msg3.x <= 580) return 17;
+					if (msg3.x >= 581 && msg3.x <= 660) return 18;
+				}
+				else if (msg3.y >= 101 && msg3.y <= 180) {
+					if (msg3.x >= 20 && msg3.x <= 100) return 21;
+					if (msg3.x >= 101 && msg3.x <= 180) return 22;
+					if (msg3.x >= 181 && msg3.x <= 260) return 23;
+					if (msg3.x >= 261 && msg3.x <= 340) return 24;
+					if (msg3.x >= 341 && msg3.x <= 420) return 25;
+					if (msg3.x >= 421 && msg3.x <= 500) return 26;
+					if (msg3.x >= 501 && msg3.x <= 580) return 27;
+					if (msg3.x >= 581 && msg3.x <= 660) return 28;
+				}
+				else if (msg3.y >= 181 && msg3.y <= 260) {
+					if (msg3.x >= 20 && msg3.x <= 100) return 31;
+					if (msg3.x >= 101 && msg3.x <= 180) return 32;
+					if (msg3.x >= 181 && msg3.x <= 260) return 33;
+					if (msg3.x >= 261 && msg3.x <= 340) return 34;
+					if (msg3.x >= 341 && msg3.x <= 420) return 35;
+					if (msg3.x >= 421 && msg3.x <= 500) return 36;
+					if (msg3.x >= 501 && msg3.x <= 580) return 37;
+					if (msg3.x >= 581 && msg3.x <= 660) return 38;
+				}
+				else if (msg3.y >= 261 && msg3.y <= 340) {
+					if (msg3.x >= 20 && msg3.x <= 100) return 41;
+					if (msg3.x >= 101 && msg3.x <= 180) return 42;
+					if (msg3.x >= 181 && msg3.x <= 260) return 43;
+					if (msg3.x >= 261 && msg3.x <= 340) return 44;
+					if (msg3.x >= 341 && msg3.x <= 420) return 45;
+					if (msg3.x >= 421 && msg3.x <= 500) return 46;
+					if (msg3.x >= 501 && msg3.x <= 580) return 47;
+					if (msg3.x >= 581 && msg3.x <= 660) return 48;
+				}
+				else if (msg3.y >= 341 && msg3.y <= 420) {
+					if (msg3.x >= 20 && msg3.x <= 100) return 51;
+					if (msg3.x >= 101 && msg3.x <= 180) return 52;
+					if (msg3.x >= 181 && msg3.x <= 260) return 53;
+					if (msg3.x >= 261 && msg3.x <= 340) return 54;
+					if (msg3.x >= 341 && msg3.x <= 420) return 55;
+					if (msg3.x >= 421 && msg3.x <= 500) return 56;
+					if (msg3.x >= 501 && msg3.x <= 580) return 57;
+					if (msg3.x >= 581 && msg3.x <= 660) return 58;
+				}
+				else if (msg3.y >= 421 && msg3.y <= 500) {
+					if (msg3.x >= 20 && msg3.x <= 100) return 61;
+					if (msg3.x >= 101 && msg3.x <= 180) return 62;
+					if (msg3.x >= 181 && msg3.x <= 260) return 63;
+					if (msg3.x >= 261 && msg3.x <= 340) return 64;
+					if (msg3.x >= 341 && msg3.x <= 420) return 65;
+					if (msg3.x >= 421 && msg3.x <= 500) return 66;
+					if (msg3.x >= 501 && msg3.x <= 580) return 67;
+					if (msg3.x >= 581 && msg3.x <= 660) return 68;
+				}
+				else if (msg3.y >= 501 && msg3.y <= 580) {
+					if (msg3.x >= 20 && msg3.x <= 100) return 71;
+					if (msg3.x >= 101 && msg3.x <= 180) return 72;
+					if (msg3.x >= 181 && msg3.x <= 260) return 73;
+					if (msg3.x >= 261 && msg3.x <= 340) return 74;
+					if (msg3.x >= 341 && msg3.x <= 420) return 75;
+					if (msg3.x >= 421 && msg3.x <= 500) return 76;
+					if (msg3.x >= 501 && msg3.x <= 580) return 77;
+					if (msg3.x >= 581 && msg3.x <= 660) return 78;
+				}
+				else if (msg3.y >= 581 && msg3.y <= 660) {
+					if (msg3.x >= 20 && msg3.x <= 100) return 81;
+					if (msg3.x >= 101 && msg3.x <= 180) return 82;
+					if (msg3.x >= 181 && msg3.x <= 260) return 83;
+					if (msg3.x >= 261 && msg3.x <= 340) return 84;
+					if (msg3.x >= 341 && msg3.x <= 420) return 85;
+					if (msg3.x >= 421 && msg3.x <= 500) return 86;
+					if (msg3.x >= 501 && msg3.x <= 580) return 87;
+					if (msg3.x >= 581 && msg3.x <= 660) return 88;
+				}
+			}
+		}
+	}
+}
+
+// 游戏主函数
 int playMain() {
 	IMAGE playerImage;
 	loadimage(&playerImage, "./image/player.png");
@@ -187,17 +286,44 @@ int playMain() {
 			outtextxy(890, 180, (char)(second % 10 + 48));
 		}			
 		else {
-				time += 200;
+				time += 50;
 		}
 		
 		if (player == 0) {
+			int avaList[20]={},avaCoordinate[20][2];
+			int avaListCycle = 0, avaCoordinateCycle = 0;
 			putimage(715, 30, &playerImage);
 			setlinecolor(CLEARORANGE);
 			roundrect(715, 30, 1015, 90, 10, 10);
+			// 生成辅助棋子
+			for (int i = 0; i <= 7; i++) {
+				for (int j = 0; j <= 7; j++) {
+					if (avaLocation(i,j,player+1,1)) {
+						chessman(j + 1, i + 1);
+						avaCoordinate[avaCoordinateCycle][0] = j + 1;
+						avaCoordinate[avaCoordinateCycle][1] = i + 1;
+						avaCoordinateCycle++;
+						avaList[avaListCycle++] = (i + 1) * 10 + j + 1;
+					}
+				}
+			}
+			if (avaList[0]) {
+				while (1) {
+					int clickPoint = gameScanMouse();
+					if (queryExsist(avaList, clickPoint)) {
+						// 清除辅助棋子
+						for (int cyc = 0; cyc <= avaCoordinateCycle; cyc++) {
+							clearChessman(avaCoordinate[cyc][0], avaCoordinate[cyc][1]);
+						}
+						chessman(clickPoint % 10, clickPoint / 10, BLACKPLAYER);
+					}
+				}
+			}
+
 			// int* lists = availableLocation(player+1);
 		}
 
-		Sleep(200);
+		Sleep(50);
 	}
 	return 0;
 }
@@ -215,7 +341,7 @@ int guideWindow(char* guide_window, char* title_window, int type) {
 	return 0;
 }
 
-// 检测鼠标消息
+// 游戏教程界面检测鼠标消息
 int guideScanMouse(int leftx, int rightx, int upy, int bottomy, int type) {
 	ExMessage msg2;
 	IMAGE nextButton;
@@ -228,19 +354,13 @@ int guideScanMouse(int leftx, int rightx, int upy, int bottomy, int type) {
 		if (peekmessage(&msg2, EM_MOUSE)) {
 			switch (msg2.message) {
 			case WM_LBUTTONDOWN:
-				if (msg2.x >= leftx && msg2.x <= rightx && msg2.y >= upy && msg2.y <= bottomy) {
-					return 1;
-				}
-				/*if (msg2.x >= 760 && msg2.x <= 960 && msg2.y >= 550 && msg2.y <= 650) {
-					return 1;   // 执行操作
-				}*/
+				if (msg2.x >= leftx && msg2.x <= rightx && msg2.y >= upy && msg2.y <= bottomy) return 1;
 			}
 		}
 	}
 
 	return 0;
 }
-
 
 // 游戏教程主函数
 int guideMain() {
@@ -269,8 +389,8 @@ int guideMain() {
 	setfillcolor(CLEARORANGERED);
 	fillrectangle(715, 300, 1015, 660);
 	setlinestyle(PS_DOT, 5);
-	chessman(4, 3, 2); chessman(3, 4, 2);
-	chessman(6, 5, 2); chessman(5, 6, 2);
+	chessman(4, 3, AVAILABLE); chessman(3, 4, AVAILABLE);
+	chessman(6, 5, AVAILABLE); chessman(5, 6, AVAILABLE);
 	outtextxy(730, 320, "左侧为游戏棋盘，您将在这里");
 	outtextxy(730, 340, "操作棋子。每次下棋前会有辅");
 	outtextxy(730, 360, "助提示，告知您应如何落子。");
@@ -296,7 +416,7 @@ int guideMain() {
 	putimage(830, 500, &arrow);
 	outtextxy(730, 320, "请点击左侧棋盘中的3D格子。");
 	guideScanMouse(260, 340, 180, 260, 0);
-	chessman(4, 3, 0); chessman(4, 4, 0);
+	chessman(4, 3, BLACKPLAYER); chessman(4, 4, BLACKPLAYER);
 	clearChessman(3, 4); clearChessman(6, 5); clearChessman(5, 6);
 	loadimage(&arrow, "./image/UP.png");
 	setfillcolor(CLEARORANGERED);
@@ -310,7 +430,7 @@ int guideMain() {
 	settextstyle(20, 0, _T("黑体"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0);
 	roundrect(715, 90, 1015, 150, 10, 10);
 	fillrectangle(715, 300, 1015, 660);
-	chessman(5, 3, 2); chessman(3, 5, 2); chessman(3, 3, 2);
+	chessman(5, 3, AVAILABLE); chessman(3, 5, AVAILABLE); chessman(3, 3, AVAILABLE);
 	outtextxy(730, 320, "恭喜！您成功的完成了第一步");
 	outtextxy(730, 340, "。上方的橙色框移动到了白棋");
 	outtextxy(730, 360, "的位置，这表示现在是白棋玩");
@@ -318,7 +438,7 @@ int guideMain() {
 	outtextxy(730, 400, "如何操作。");
 	putimage(830, 500, &arrow);
 	guideScanMouse(760, 960, 550, 650, 1);
-	chessman(3, 3, 1); clearChessman(5, 3); clearChessman(3, 5); chessman(4, 4, 1);
+	chessman(3, 3, WHITEPLAYER); clearChessman(5, 3); clearChessman(3, 5); chessman(4, 4, WHITEPLAYER);
 	loadimage(&arrow, "./image/Correct.png");
 	setfillcolor(CLEARORANGERED);
 	setlinestyle(PS_SOLID, 7);
