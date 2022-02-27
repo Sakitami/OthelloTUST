@@ -1,15 +1,25 @@
-int queryExsist(int a[20], int num) {
-	static int _i, _exist = -1;
-	for (_i = 0; _i < 20; _i++) {
-		if (a[_i] == num) {
-			_exist = _i;
-			break;
-		}
-	}
-	if (_exist >= 0) {
-		return 1;
-	}
-	else {
-		return 0;
-	}
+#include<time.h>
+#include<stdio.h>
+
+int queryExsist(int* arr, int num) { 
+	for (int i = 0; i < 20; i++)
+		if (arr[i] == num) return 1;
+	return 0;
+}
+
+
+int randomNumber(int max_num) {
+    int a;
+    srand((unsigned)time(NULL));
+    a = rand() % max_num;
+    return a;
+}
+
+int validNumber(int* arr) {
+    int num = 0;
+    for (int i = 0; i < 20; i++) {
+        if (arr[i] == 0)continue;
+        num++;
+    }
+    return num;
 }

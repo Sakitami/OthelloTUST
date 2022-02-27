@@ -1,12 +1,11 @@
 ﻿// new1.cpp : 定义应用程序的入口点。
 //
 #include<easyx.h>                 // EasyX图形绘制
-#include "framework.h"
-#include "new1.h"
 #include<process.h>               // 多线程库
-#include<stdio.h>
 #include<mmstream.h>              // 包含多媒体设备接口头文件
 #include<string.h>                // 清空数组用
+#include "framework.h"
+#include "new1.h"
 #include "guide.c"                // 教程文本
 #include "function.c"
 #include "game.c"
@@ -40,6 +39,9 @@ int guideScanMouse(int leftx, int rightx, int upy, int bottomy, int type);
 // 倒计时信息
 int timeUp = 0;
 int endGame = 0;
+
+// 人机对战信息
+int aiMode = 0;
 
 // 游戏倒计时线程函数
 void countDown(void*) {
@@ -402,7 +404,7 @@ int playMain() {
 	int player = 0, checkPlayer = 1, onGame = 1;                                        // 黑方先手
 	int avaList[20] = {}, avaCoordinate[20][2] = {};
 	int avaListCycle = 0, avaCoordinateCycle = 0;
-	int number;
+	int number, clickPoint = 0;
 	_beginthread(countDown, 0, NULL);
 	mciSendString("open ./music/chessMan.mp3 alias chessMan", 0, 0, 0);
 	while (onGame) {
@@ -426,7 +428,17 @@ int playMain() {
 		}
 		if (avaList[0]) {
 			while (1) {
-				int clickPoint = gameScanMouse();
+				if (!aiMode) clickPoint = gameScanMouse();
+				else if (player == WHITEPLAYER) {
+					Sleep(1000);
+					// 获取avaList中的长度，将有效的数字传入clickPoint
+					clickPoint = avaList[randomNumber(validNumber(avaList))];
+				}
+				else { clickPoint = gameScanMouse(); }
+				if (timeUp == 1) {
+					onGame = 0;
+					break;
+				}
 				if (timeUp == 1) {
 					onGame = 0;
 					break;
@@ -682,6 +694,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			mciSendString("close Button", 0, 0, 0);
 			mciSendString("open ./music/clickButton.mp3 alias Button", 0, 0, 0);
 			mciSendString("play Button", 0, 0, 0);
+			aiMode = 1;
+			playerShow();
+			playMain();
+			aiMode = 0;
 			break;
 		}
 	}
