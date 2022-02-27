@@ -15,8 +15,6 @@
 #define DOWN 7
 #define DR 8
 
-typedef int* avaPointer;
-
 static int chessBoard[8][8] = {
     {0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0},
@@ -27,6 +25,38 @@ static int chessBoard[8][8] = {
     {0,0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0,0}
 };
+
+// 调试用
+/*int printnumber() {
+
+    for (int i = 0; i <= 7; i++) {
+        for (int j = 0; j <= 7; j++)
+            printf("%d", chessBoard[i][j]);
+        printf("\n");
+    }
+    printf("\n---");
+
+        return 0;
+}*/
+
+// 棋盘复位
+int resetChessBoard() {
+    for (int i = 0; i <= 7; i++) {
+        for (int j = 0; j <= 7; j++) {
+            if (i == 3 && j == 3 || i == 4 && j == 4)chessBoard[i][j] = 2;
+            else if (i == 3 && j == 4 || i == 4 && j == 3)chessBoard[i][j] = 1;
+            else chessBoard[i][j] = 0;
+        }
+    }
+    return 0;
+}
+
+// 同步界面与后端
+int syncChessBoard(int x, int y, int player) {
+    
+    chessBoard[y - 1][x - 1] = player + 1;
+    return 0;
+}
 
 // 检查该位置是否有效(可放置棋子)
 int validPosition(int i, int j)
@@ -43,6 +73,7 @@ int distance(int i1, int j1, int i2, int j2)
     return dj;
 }
 
+// 检查某位置是否可以放置棋子
 int avaLocation(int i, int j, int player, int direction)
 {
     if (!validPosition(i, j)) return 0;           // 若为无效位置，则跳过检查
@@ -50,7 +81,7 @@ int avaLocation(int i, int j, int player, int direction)
 
     //int opposingPlayer = (player + 1) % 2;        // 对方棋子
     int opposingPlayer;
-    if (player = 1)opposingPlayer = 2;
+    if (player == 1)opposingPlayer = 2;
     else { opposingPlayer = 1; }
 
 
@@ -73,7 +104,7 @@ int avaLocation(int i, int j, int player, int direction)
                 iCheck -= 1;
 
             if (validPosition(iCheck, jCheck) && distance(i, j, iCheck, jCheck) > 1 && chessBoard[iCheck][jCheck] == player)
-                return 1;
+                return 2;
             // return 0;
         case UR:
             // 测试 上右 方向是否夹住棋子
@@ -84,7 +115,7 @@ int avaLocation(int i, int j, int player, int direction)
                 jCheck += 1;
             }
             if (validPosition(iCheck, jCheck) && distance(i, j, iCheck, jCheck) > 1 && chessBoard[iCheck][jCheck] == player)
-                return 1;
+                return 3;
             // return 0;
         case LEFT:
             // 测试 左 方向是否夹住棋子
@@ -93,7 +124,7 @@ int avaLocation(int i, int j, int player, int direction)
                 jCheck -= 1;
 
             if (validPosition(iCheck, jCheck) && distance(i, j, iCheck, jCheck) > 1 && chessBoard[iCheck][jCheck] == player)
-                return 1;
+                return 4;
             // return 0;
         case RIGHT:
             // 测试 右 方向是否夹住棋子
@@ -102,7 +133,7 @@ int avaLocation(int i, int j, int player, int direction)
                 jCheck += 1;
 
             if (validPosition(iCheck, jCheck) && distance(i, j, iCheck, jCheck) > 1 && chessBoard[iCheck][jCheck] == player)
-                return 1;
+                return 5;
             // return 0;
         case DL:
             // 测试 下左 方向是否夹住棋子
@@ -113,7 +144,7 @@ int avaLocation(int i, int j, int player, int direction)
                 jCheck -= 1;
             }
             if (validPosition(iCheck, jCheck) && distance(i, j, iCheck, jCheck) > 1 && chessBoard[iCheck][jCheck] == player)
-                return 1;
+                return 6;
             // return 0;
         case DOWN:
             // 测试 下 方向是否夹住棋子
@@ -122,7 +153,7 @@ int avaLocation(int i, int j, int player, int direction)
                 iCheck += 1;
 
             if (validPosition(iCheck, jCheck) && distance(i, j, iCheck, jCheck) > 1 && chessBoard[iCheck][jCheck] == player)
-                return 1;
+                return 7;
             // return 0;
         case DR:
             // 测试 下右 方向是否夹住棋子
@@ -133,8 +164,122 @@ int avaLocation(int i, int j, int player, int direction)
                 jCheck += 1;
             }
             if (validPosition(iCheck, jCheck) && distance(i, j, iCheck, jCheck) > 1 && chessBoard[iCheck][jCheck] == player)
-                return 1;
+                return 8;
             
     }
     return 0;
+}
+
+// 检查某方向可以覆盖多少棋子
+int reverseChessman(int i, int j, int player, int direction) {
+    int opposingPlayer;
+    int iCheck = i, jCheck = j;
+    int number = 0;
+    if (player == 1) opposingPlayer = 2;
+    else { opposingPlayer = 1; }
+
+    switch (direction) {
+        case UL:
+            iCheck = i - 1; jCheck = j - 1;
+            while (chessBoard[iCheck][jCheck] == opposingPlayer)
+            {
+                iCheck -= 1;
+                jCheck -= 1;
+                number++;
+            }
+            return number;
+            break;
+        case UP:
+            iCheck = i - 1, jCheck = j;
+            while (chessBoard[iCheck][jCheck] == opposingPlayer)
+            {
+                iCheck -= 1;
+                number++;
+            }
+            return number;
+            break;
+        case UR:
+            iCheck = i - 1, jCheck = j + 1;
+            while (chessBoard[iCheck][jCheck] == opposingPlayer)
+            {
+                iCheck -= 1;
+                jCheck += 1;
+                number++;
+            }
+            return number;
+            break;
+        case LEFT:
+            iCheck = i, jCheck = j - 1;
+            while (chessBoard[iCheck][jCheck] == opposingPlayer)
+            {
+                jCheck -= 1;
+                number++;
+            }
+            return number;
+            break;
+        case RIGHT:
+            iCheck = i, jCheck = j + 1;
+            while (validPosition(iCheck, jCheck) && chessBoard[iCheck][jCheck] == opposingPlayer)
+            {
+                jCheck += 1;
+                number++;
+            }
+            return number;
+            break;
+        case DL:
+            iCheck = i + 1, jCheck = j - 1;
+            while (validPosition(iCheck, jCheck) && chessBoard[iCheck][jCheck] == opposingPlayer)
+            {
+                iCheck += 1;
+                jCheck -= 1;
+                number++;
+            }
+            return number;
+            break;
+        case DOWN:
+            iCheck = i + 1, jCheck = j;
+            while (chessBoard[iCheck][jCheck] == opposingPlayer)
+            {
+                iCheck += 1;
+                number++;
+            }
+                
+            return number;
+        case DR:
+            iCheck = i + 1, jCheck = j + 1;
+            while (chessBoard[iCheck][jCheck] == opposingPlayer)
+            {
+                iCheck += 1;
+                jCheck += 1;
+                number++;
+            }
+            return number;
+            break;
+    }
+    return 0;
+}
+
+// 检查赢家或玩家积分
+int checkWinner(int type) {
+    int blackScore, whiteScore, numbers;
+    for (int player = 1; player <= 2; player++) {
+        numbers = 0;
+        for (int i = 0; i < 8; i++)
+            for(int j = 0; j <8; j++)
+                if (chessBoard[i][j] == player)numbers++;
+        if (player == 1)blackScore = numbers;
+        else whiteScore = numbers;
+    }
+    if (type == 1) {
+        return blackScore;
+    }
+    else if (type == 2) {
+        return whiteScore;
+    }
+    else {
+    if (whiteScore < blackScore)return 0;
+    else if (whiteScore > blackScore)return 1;
+    else return 2;
+    }
+
 }
