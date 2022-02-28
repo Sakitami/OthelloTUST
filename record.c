@@ -34,7 +34,7 @@
 
  */
  // 获取排行榜信息，并返回
-char* main() 
+int main() 
 { 
 	FILE *fp;
     FILE *fp1; 
@@ -73,27 +73,37 @@ char* main()
             k++;
         }
     }
-    for(int scoreIndex = 0;playerRanking[scoreIndex+1][1][0]!='\0';scoreIndex++){
-        int score1 = atoi(playerRanking[scoreIndex][1]);
-        int score2 = atoi(playerRanking[scoreIndex+1][1]);
-        if (score1 >= score2) continue;
-        else {
-            for(int _temp = 0; _temp < sizeof(playerRanking[scoreIndex][0]);_temp++)tempChar[0][0][_temp] = playerRanking[scoreIndex][0][_temp];
-            for(int _temp2 = 0; _temp2 < sizeof(playerRanking[scoreIndex][1]);_temp2++)tempChar[0][1][_temp2] = playerRanking[scoreIndex][1][_temp2];
-            for(int _temp3 = 0; _temp3 < sizeof(playerRanking[scoreIndex][2]);_temp3++)tempChar[0][2][_temp3] = playerRanking[scoreIndex][2][_temp3];
-            for(int _temp4 = 0; _temp4 < sizeof(playerRanking[scoreIndex+1][0]);_temp4++)playerRanking[scoreIndex][0][_temp4] = playerRanking[scoreIndex+1][0][_temp4];
-            for(int _temp5 = 0; _temp5 < sizeof(playerRanking[scoreIndex+1][1]);_temp5++)playerRanking[scoreIndex][1][_temp5] = playerRanking[scoreIndex+1][1][_temp5];
-            for(int _temp6 = 0; _temp6 < sizeof(playerRanking[scoreIndex+1][2]);_temp6++)playerRanking[scoreIndex][2][_temp6] = playerRanking[scoreIndex+1][2][_temp6];
-            for(int _temp7 = 0; _temp7 < sizeof(tempChar[0][0]);_temp7++)playerRanking[scoreIndex+1][0][_temp7] = tempChar[0][0][_temp7];
-            for(int _temp8 = 0; _temp8 < sizeof(tempChar[0][1]);_temp8++)playerRanking[scoreIndex+1][1][_temp8] = tempChar[0][1][_temp8];
-            for(int _temp9 = 0; _temp9 < sizeof(tempChar[0][2]);_temp9++)playerRanking[scoreIndex+1][2][_temp9] = tempChar[0][2][_temp9];
+    int ROW=0;
+    for (int row = 0; row<50;row++) {
+        if (playerRanking[row][0][0] != '\0') ROW++;
+        else if(playerRanking[row][0][0] = '\0') continue;
+    }//把每一行全部遍历，遇到有数据的行就记数加一，遇到\0直接跳到下一行
+    for (int ScoreRow = 0; ScoreRow < ROW; ScoreRow++) {
+        for (int scoreIndex = 0; playerRanking[scoreIndex + 1][1][0] != '\0'; scoreIndex++) {
+            int score1 = atoi(playerRanking[scoreIndex][1]);
+            int score2 = atoi(playerRanking[scoreIndex + 1][1]);
+            if (score1 >= score2) continue;
+            else {
+                for (int _temp = 0; _temp < sizeof(playerRanking[scoreIndex][0]); _temp++)tempChar[0][0][_temp] = playerRanking[scoreIndex][0][_temp];
+                for (int _temp2 = 0; _temp2 < sizeof(playerRanking[scoreIndex][1]); _temp2++)tempChar[0][1][_temp2] = playerRanking[scoreIndex][1][_temp2];
+                for (int _temp3 = 0; _temp3 < sizeof(playerRanking[scoreIndex][2]); _temp3++)tempChar[0][2][_temp3] = playerRanking[scoreIndex][2][_temp3];
+                for (int _temp4 = 0; _temp4 < sizeof(playerRanking[scoreIndex + 1][0]); _temp4++)playerRanking[scoreIndex][0][_temp4] = playerRanking[scoreIndex + 1][0][_temp4];
+                for (int _temp5 = 0; _temp5 < sizeof(playerRanking[scoreIndex + 1][1]); _temp5++)playerRanking[scoreIndex][1][_temp5] = playerRanking[scoreIndex + 1][1][_temp5];
+                for (int _temp6 = 0; _temp6 < sizeof(playerRanking[scoreIndex + 1][2]); _temp6++)playerRanking[scoreIndex][2][_temp6] = playerRanking[scoreIndex + 1][2][_temp6];
+                for (int _temp7 = 0; _temp7 < sizeof(tempChar[0][0]); _temp7++)playerRanking[scoreIndex + 1][0][_temp7] = tempChar[0][0][_temp7];
+                for (int _temp8 = 0; _temp8 < sizeof(tempChar[0][1]); _temp8++)playerRanking[scoreIndex + 1][1][_temp8] = tempChar[0][1][_temp8];
+                for (int _temp9 = 0; _temp9 < sizeof(tempChar[0][2]); _temp9++)playerRanking[scoreIndex + 1][2][_temp9] = tempChar[0][2][_temp9];
+            }
         }
-
     }
     
+
+    printf("%s",&playerRanking[3][0][0]);
+    printf("%s",&playerRanking[3][1][0]);
+    printf("%s",&playerRanking[3][2][0]);
 	fclose(fp);	 // 关闭读文件
     fclose(fp1); // 关闭写文件
-	return playerRanking; 
+	return 0; 
 }
 
 const char *tmp = "This string literal is arbitrary";
