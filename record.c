@@ -76,8 +76,8 @@ int main()
     int ROW=0;
     for (int row = 0; row<50;row++) {
         if (playerRanking[row][0][0] != '\0') ROW++;
-        else if(playerRanking[row][0][0] = '\0') continue;
-    }//把每一行全部遍历，遇到有数据的行就记数加一，遇到\0直接跳到下一行
+        else if(playerRanking[row][0][0] = '\0') break;
+    }//把每一行全部遍历，遇到有数据的行就记数加一，遇到\0直接结束
     for (int ScoreRow = 0; ScoreRow < ROW; ScoreRow++) {
         for (int scoreIndex = 0; playerRanking[scoreIndex + 1][1][0] != '\0'; scoreIndex++) {
             int score1 = atoi(playerRanking[scoreIndex][1]);
@@ -96,34 +96,71 @@ int main()
             }
         }
     }
-    
-
-    printf("%s",&playerRanking[3][0][0]);
-    printf("%s",&playerRanking[3][1][0]);
-    printf("%s",&playerRanking[3][2][0]);
 	fclose(fp);	 // 关闭读文件
     fclose(fp1); // 关闭写文件
 	return 0; 
 }
 
-const char *tmp = "This string literal is arbitrary";
+// const char *tmp = "This string literal is arbitrary";
 
 // 检查字符串中是否有某字符串
 // 目前没有用到
-int test2(int argc, char *argv[]){
-    char *ret;
+// int test2(int argc, char *argv[]){
+//     char *ret;
 
-    ret = strstr(tmp, "iteral");
-    if (ret)
-        printf("found substring at address %p\n", ret);
-    else
-        printf("no substring found!\n");
+//     ret = strstr(tmp, "iteral");
+//     if (ret)
+//         printf("found substring at address %p\n", ret);
+//     else
+//         printf("no substring found!\n");
 
-    exit(EXIT_SUCCESS);
-}
+//     exit(EXIT_SUCCESS);
+// }
+
 
 // 打开并写入文件
-// 目前没有用到
+// 未完善
+typedef struct Gamer//定义玩家的结构
+{
+    int num;//对局数
+    int sum;//积分
+    char name[20];//玩家名
+    struct Gamer* pnext;
+}GAMER;
+GAMER* pGamer = NULL;//定义链表的头结点
+FILE* fp = NULL;//定义文件指针
+char filename[20]=GAMERs;//文件名
+//创建链表
+void CreateList()
+{
+    pGamer = (GAMER*)malloc(sizeof(GAMER));
+    pGamer->pnext = NULL;
+}
+void OpenFile()
+{
+    GAMER* pnew = NULL;
+    GAMER* ptemp = NULL;
+    CreateList();
+    ptemp = pGamer;
+    fp = fopen(filename, "a+");
+    pnew = (GAMER*)malloc(sizeof(GAMER));
+    while (1)
+    {
+        if (fscanf(fp, "%d\t%d\t%s\n", &pnew->num, &pnew->sum, pnew->name) == EOF)
+        {
+            free(pnew);
+            break;
+        }
+        pnew->pnext = NULL;
+        ptemp->pnext = pnew;
+        ptemp = ptemp->pnext;
+
+    }
+   
+
+}
+
+
 int test()
 {
    FILE *fp = NULL;
