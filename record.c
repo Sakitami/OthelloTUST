@@ -76,7 +76,7 @@ int main()
     int ROW=0;
     for (int row = 0; row<50;row++) {
         if (playerRanking[row][0][0] != '\0') ROW++;
-        else if(playerRanking[row][0][0] = '\0') break;
+        else if(playerRanking[row][0][0] == '\0') break;
     }//把每一行全部遍历，遇到有数据的行就记数加一，遇到\0直接结束
     for (int ScoreRow = 0; ScoreRow < ROW; ScoreRow++) {
         for (int scoreIndex = 0; playerRanking[scoreIndex + 1][1][0] != '\0'; scoreIndex++) {
