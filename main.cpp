@@ -1,15 +1,15 @@
-#include<easyx.h>                 // EasyXÍ¼ĞÎ»æÖÆ
+#include<easyx.h>                 // EasyXå›¾å½¢ç»˜åˆ¶
 #include <stdio.h>
-#include<process.h>               // ¶àÏß³Ì¿â
-#include<stdlib.h>                // Éú³ÉËæ»úÊı
-#include<mmstream.h>              // °üº¬¶àÃ½ÌåÉè±¸½Ó¿ÚÍ·ÎÄ¼ş
-#include<string.h>                // Çå¿ÕÊı×éÓÃ
-#include "guide.c"                // ½Ì³ÌÎÄ±¾
-#include "function.c"             // ²¿·ÖÂß¼­¹¦ÄÜ
-#include "game.c"                 // ÓÎÏ·Âß¼­
+#include<process.h>               // å¤šçº¿ç¨‹åº“
+#include<stdlib.h>                // ç”Ÿæˆéšæœºæ•°
+#include<mmstream.h>              // åŒ…å«å¤šåª’ä½“è®¾å¤‡æ¥å£å¤´æ–‡ä»¶
+#include<string.h>                // æ¸…ç©ºæ•°ç»„ç”¨
+#include "guide.c"                // æ•™ç¨‹æ–‡æœ¬
+#include "function.c"             // éƒ¨åˆ†é€»è¾‘åŠŸèƒ½
+#include "game.c"                 // æ¸¸æˆé€»è¾‘
 
 
-#pragma comment(lib,"winmm.lib")  // ¼ÓÔØ¾²Ì¬¿â
+#pragma comment(lib,"winmm.lib")  // åŠ è½½é™æ€åº“
 
 #define CLEARGREEN RGB(123,237,159)
 #define CLEARORANGE RGB(243,156,18)
@@ -35,19 +35,19 @@ int checkerBoard();
 int playMain();
 int guideScanMouse(int leftx, int rightx, int upy, int bottomy, int type);
 
-// µ¹¼ÆÊ±ĞÅÏ¢
+// å€’è®¡æ—¶ä¿¡æ¯
 int timeUp = 0;
 int endGame = 0;
 
-// ÈË»ú¶ÔÕ½ĞÅÏ¢
+// äººæœºå¯¹æˆ˜ä¿¡æ¯
 int aiMode = 0;
 
-// ÓÎÏ·µ¹¼ÆÊ±Ïß³Ìº¯Êı
+// æ¸¸æˆå€’è®¡æ—¶çº¿ç¨‹å‡½æ•°
 void countDown(void *) {
 	int time = 0, second = 0, minute = 10, onGame = 1;
 	int endMode = 0;
 	while (onGame) {
-		// µ¹¼ÆÊ±
+		// å€’è®¡æ—¶
 		if (endGame == 1) {
 			onGame = 0;
 			endMode = 1;
@@ -69,8 +69,8 @@ void countDown(void *) {
 			setlinecolor(WHITE);
 			setlinestyle(PS_SOLID, 7);
 			fillroundrect(715, 170, 1015, 210, 10, 10);
-			outtextxy(730, 180, "Ê£ÓàÊ±¼ä£º");
-			outtextxy(850, 180, "·Ö   Ãë");
+			outtextxy(730, 180, "å‰©ä½™æ—¶é—´ï¼š");
+			outtextxy(850, 180, "åˆ†   ç§’");
 			outtextxy(837, 180, (char)(minute + 48));
 			outtextxy(875, 180, (char)(second / 10 + 48));
 			outtextxy(890, 180, (char)(second % 10 + 48));
@@ -87,11 +87,11 @@ void countDown(void *) {
 		setlinestyle(PS_SOLID, 7);
 		setlinecolor(CLEARORANGE);
 		fillrectangle(715, 300, 1015, 660);
-		settextstyle(50, 0, _T("ºÚÌå"), 0, 0, FW_EXTRABOLD, false, false, false, 0, 0, 0, 0, 0); // ÉèÖÃ×ÖÌåÑùÊ½
+		settextstyle(50, 0, _T("é»‘ä½“"), 0, 0, FW_EXTRABOLD, false, false, false, 0, 0, 0, 0, 0); // è®¾ç½®å­—ä½“æ ·å¼
 		setbkmode(TRANSPARENT);
-		outtextxy(730, 320, "Ê±¼äµ½£¡");
-		settextstyle(20, 0, _T("ºÚÌå"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0); // ÉèÖÃ×ÖÌåÑùÊ½
-		outtextxy(730, 370, "Çëµã»÷ÈÎÒâ¸¨ÖúÆå×Ó²é¿´½á¹û");
+		outtextxy(730, 320, "æ—¶é—´åˆ°ï¼");
+		settextstyle(20, 0, _T("é»‘ä½“"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0); // è®¾ç½®å­—ä½“æ ·å¼
+		outtextxy(730, 370, "è¯·ç‚¹å‡»ä»»æ„è¾…åŠ©æ£‹å­æŸ¥çœ‹ç»“æœ");
 		_endthread();
 	}
 	else {
@@ -102,7 +102,7 @@ void countDown(void *) {
 
 }
 
-// Æå×ÓÉú³Éº¯Êı
+// æ£‹å­ç”Ÿæˆå‡½æ•°
 int chessman(int x, int y, int player = 2)
 {
 	IMAGE chessman;
@@ -127,11 +127,11 @@ int chessman(int x, int y, int player = 2)
 	return 0;
 }
 
-// ÓÎÏ·ÖĞÆå×Ó×Ô¶¯Éú³É¸²¸Ç
+// æ¸¸æˆä¸­æ£‹å­è‡ªåŠ¨ç”Ÿæˆè¦†ç›–
 int chessHelper(int x, int y,int number,int direction,int player) {
-	/* TODO Ìí¼ÓÒ»¸öĞ§¹û¶¯»­
-	 * µ«EasyX½öÖ§³ÖGIFµÚÒ»Ö¡
-	 * ĞèÒª×öÒ»¸ö¶¯»­Ğ§¹ûº¯Êı
+	/* TODO æ·»åŠ ä¸€ä¸ªæ•ˆæœåŠ¨ç”»
+	 * ä½†EasyXä»…æ”¯æŒGIFç¬¬ä¸€å¸§
+	 * éœ€è¦åšä¸€ä¸ªåŠ¨ç”»æ•ˆæœå‡½æ•°
 	 */
 	/*IMAGE change;
 	if (player == WHITEPLAYER) {
@@ -200,7 +200,7 @@ int chessHelper(int x, int y,int number,int direction,int player) {
 	return 0;
 }
 
-// Çå¿ÕÆåÅÌÖĞµÄÄ³Î»ÖÃµÄÆå×Ó(Çå³ı¸¨ÖúÆå×Ó)
+// æ¸…ç©ºæ£‹ç›˜ä¸­çš„æŸä½ç½®çš„æ£‹å­(æ¸…é™¤è¾…åŠ©æ£‹å­)
 int clearChessman(int x, int y)
 {
 	setfillcolor(CLEARGREEN);
@@ -208,20 +208,20 @@ int clearChessman(int x, int y)
 	return 0;
 }
 
-// ¿ªÊ¼ÓÎÏ·½çÃæ»æÖÆº¯Êı
+// å¼€å§‹æ¸¸æˆç•Œé¢ç»˜åˆ¶å‡½æ•°
 int playerShow() {
 	IMAGE player, titleBkground, step;
-	loadimage(&player, "./image/player.png");                // ¼ÓÔØºÚ°×ÆåÓÒÉÏ½Ç×´Ì¬
-	loadimage(&titleBkground, "./image/woolSut.jpg");        // ¼ÓÔØÓÒ²à±³¾°Í¼Æ¬
+	loadimage(&player, "./image/player.png");                // åŠ è½½é»‘ç™½æ£‹å³ä¸Šè§’çŠ¶æ€
+	loadimage(&titleBkground, "./image/woolSut.jpg");        // åŠ è½½å³ä¾§èƒŒæ™¯å›¾ç‰‡
 	putimage(715, 30, &titleBkground);
 	putimage(715, 30, &player);
 	settextcolor(BLACK);
 	setfillcolor(WHITE);
 	setlinecolor(WHITE);
 	fillroundrect(715, 170, 1015, 210,10,10);
-	settextstyle(20, 0, _T("ºÚÌå"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0); // ÉèÖÃ×ÖÌåÑùÊ½
-	outtextxy(730, 180, "Ê£ÓàÊ±¼ä£º");	
-	outtextxy(850, 180, "·Ö   Ãë");
+	settextstyle(20, 0, _T("é»‘ä½“"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0); // è®¾ç½®å­—ä½“æ ·å¼
+	outtextxy(730, 180, "å‰©ä½™æ—¶é—´ï¼š");	
+	outtextxy(850, 180, "åˆ†   ç§’");
 	outtextxy(822, 180, (char)(49));
 	outtextxy(837, 180, (char)(48));
 	outtextxy(875, 180, (char)(48));
@@ -229,7 +229,7 @@ int playerShow() {
 	return 0;
 }
 
-// »æÖÆÓÎÏ·²Ëµ¥
+// ç»˜åˆ¶æ¸¸æˆèœå•
 int startMenu() {
 	ExMessage msg;
 
@@ -248,13 +248,13 @@ int startMenu() {
 				loadimage(&startGame, "./image/start.png");
 				loadimage(&gameGuide, "./image/guide.png");
 				loadimage(&AImode, "./image/AImode.png");
-				if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 170 && msg.y <= 290) {        // ÅĞ¶ÏÊó±êÊÇ·ñÎ»ÓÚ¡°¿ªÊ¼ÓÎÏ·¡±
+				if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 170 && msg.y <= 290) {        // åˆ¤æ–­é¼ æ ‡æ˜¯å¦ä½äºâ€œå¼€å§‹æ¸¸æˆâ€
 					loadimage(&startGame, "./image/start_on.png");
 				}
-				else if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 310 && msg.y <= 430) {   // ÅĞ¶ÏÊó±êÊÇ·ñÎ»ÓÚ¡°ÓÎÏ·½Ì³Ì¡±
+				else if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 310 && msg.y <= 430) {   // åˆ¤æ–­é¼ æ ‡æ˜¯å¦ä½äºâ€œæ¸¸æˆæ•™ç¨‹â€
 					loadimage(&gameGuide, "./image/guide_on.png");
 				}
-				else if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 450 && msg.y <= 570) {   // ÅĞ¶ÏÊó±êÊÇ·ñÎ»ÓÚ¡°ÈË»ú¶ÔÕ½¡±
+				else if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 450 && msg.y <= 570) {   // åˆ¤æ–­é¼ æ ‡æ˜¯å¦ä½äºâ€œäººæœºå¯¹æˆ˜â€
 					loadimage(&AImode, "./image/AImode_on.png");
 				}
 				putimage(715, 170, &startGame);
@@ -263,13 +263,13 @@ int startMenu() {
 				break;
 			case WM_LBUTTONDOWN:
 				if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 170 && msg.y <= 290) {        
-					return 1;   // °´ÏÂ¡°¿ªÊ¼ÓÎÏ·¡±Ö´ĞĞ²Ù×÷1
+					return 1;   // æŒ‰ä¸‹â€œå¼€å§‹æ¸¸æˆâ€æ‰§è¡Œæ“ä½œ1
 				}
 				else if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 310 && msg.y <= 430) {
-					return 2;   // °´ÏÂ¡°ÓÎÏ·½Ì³Ì¡±Ö´ĞĞ²Ù×÷2
+					return 2;   // æŒ‰ä¸‹â€œæ¸¸æˆæ•™ç¨‹â€æ‰§è¡Œæ“ä½œ2
 				}
 				else if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 450 && msg.y <= 570) {
-					return 3;   // °´ÏÂ¡°ÈË»ú¶ÔÕ½¡±Ö´ĞĞ²Ù×÷3
+					return 3;   // æŒ‰ä¸‹â€œäººæœºå¯¹æˆ˜â€æ‰§è¡Œæ“ä½œ3
 				}
 			}
 		}
@@ -278,7 +278,7 @@ int startMenu() {
 	return 0;
 }
 
-// ÆåÅÌÉú³Éº¯Êı
+// æ£‹ç›˜ç”Ÿæˆå‡½æ•°
 int checkerBoard()
 {
 	IMAGE settingBkground, titleBkground;
@@ -286,12 +286,12 @@ int checkerBoard()
 	loadimage(&titleBkground, "./image/title.png");
 	char listNumber[9] = "abcdefgh";
 	char lineNumber[9] = "12345678";
-	setbkcolor(WHITE); cleardevice();                            // ÉèÖÃ±³¾°ÑÕÉ«
-	setfillcolor(CLEARGREEN);settextcolor(CLEARGREEN);           // ÉèÖÃÌî³ä¼°ÎÄ×ÖÑÕÉ«
+	setbkcolor(WHITE); cleardevice();                            // è®¾ç½®èƒŒæ™¯é¢œè‰²
+	setfillcolor(CLEARGREEN);settextcolor(CLEARGREEN);           // è®¾ç½®å¡«å……åŠæ–‡å­—é¢œè‰²
 	setlinestyle(PS_SOLID, 1); setlinecolor(WHITE);
-	settextstyle(20, 0, _T("ºÚÌå"));
-	fillroundrect(20, 20, 660, 660, 5, 5);                       // ¼ÓÔØÆåÅÌ±³¾°
-	// »æÖÆÆåÅÌ¸ñ×Ó¼°ĞĞÁĞºÅ
+	settextstyle(20, 0, _T("é»‘ä½“"));
+	fillroundrect(20, 20, 660, 660, 5, 5);                       // åŠ è½½æ£‹ç›˜èƒŒæ™¯
+	// ç»˜åˆ¶æ£‹ç›˜æ ¼å­åŠè¡Œåˆ—å·
 	for (int i = 0,xPosition = 100,yPosition = 100; i <= 15; i++) {
 		if (i <= 7) {
 			line(20, xPosition, 660, xPosition);
@@ -311,7 +311,7 @@ int checkerBoard()
 			outtextxy(60 + (i - 8) * 80, 660, listNumber[i - 8]);
 		}
 	}
-	// »æÖÆ³õÊ¼ÓÎÏ·Æå×Ó
+	// ç»˜åˆ¶åˆå§‹æ¸¸æˆæ£‹å­
 	chessman(4, 4, WHITEPLAYER);chessman(5, 5, WHITEPLAYER);
 	chessman(4, 5, BLACKPLAYER);chessman(5, 4, BLACKPLAYER);
 	putimage(700, 0, &settingBkground);
@@ -321,7 +321,7 @@ int checkerBoard()
 	return 0;
 }
 
-// ¼ì²âÆåÅÌÊó±êĞÅÏ¢
+// æ£€æµ‹æ£‹ç›˜é¼ æ ‡ä¿¡æ¯
 int gameScanMouse() {
 	ExMessage msg3;
 	while (1) {
@@ -413,12 +413,12 @@ int gameScanMouse() {
 	}
 }
 
-// ÓÎÏ·Ö÷º¯Êı
+// æ¸¸æˆä¸»å‡½æ•°
 int playMain() {
 	IMAGE playerImage;
 	loadimage(&playerImage, "./image/player.png");
-	int player = 0, checkPlayer = 1, onGame = 1;              // ºÚ·½ÏÈÊÖ
-	int chessmanNumber = 4, blackScore = 2, whiteScore = 2;   // »ı·Ö¼ÆËãÓëÏÔÊ¾Ïà¹Ø±äÁ¿
+	int player = 0, checkPlayer = 1, onGame = 1;              // é»‘æ–¹å…ˆæ‰‹
+	int chessmanNumber = 4, blackScore = 2, whiteScore = 2;   // ç§¯åˆ†è®¡ç®—ä¸æ˜¾ç¤ºç›¸å…³å˜é‡
 	int avaList[20] = {}, avaCoordinate[20][2] = {};
 	int avaListCycle = 0, avaCoordinateCycle = 0;
 	int number, clickPoint = 0;
@@ -427,9 +427,9 @@ int playMain() {
 	setlinecolor(WHITE);
 	setlinestyle(PS_SOLID, 7);
 	fillroundrect(715, 220, 1015, 260, 10, 10);
-	settextstyle(20, 0, _T("ºÚÌå"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0); // ÉèÖÃ×ÖÌåÑùÊ½
-	outtextxy(730, 235, "ºÚÆå£º");
-	outtextxy(850, 235, "°×Æå£º");
+	settextstyle(20, 0, _T("é»‘ä½“"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0); // è®¾ç½®å­—ä½“æ ·å¼
+	outtextxy(730, 235, "é»‘æ£‹ï¼š");
+	outtextxy(850, 235, "ç™½æ£‹ï¼š");
 	mciSendString("open ./music/chessMan.mp3 alias chessMan", 0, 0, 0);
 	while (onGame) {
 		setlinestyle(PS_SOLID, 7);
@@ -441,7 +441,7 @@ int playMain() {
 		outtextxy(800, 235, (char)(blackScore % 10 + 48));
 		outtextxy(905, 235, (char)(whiteScore / 10 + 48));
 		outtextxy(920, 235, (char)(whiteScore % 10 + 48));
-		// Éú³É¸¨ÖúÆå×Ó
+		// ç”Ÿæˆè¾…åŠ©æ£‹å­
 		for (int i = 0; i <= 7; i++) {
 			for (int j = 0; j <= 7; j++) {
 				if (avaLocation(i,j,player+1,1)) {
@@ -458,7 +458,7 @@ int playMain() {
 				if(!aiMode) clickPoint = gameScanMouse();
 				else if (player == WHITEPLAYER) {
 						Sleep(1000);
-						// »ñÈ¡avaListÖĞµÄ³¤¶È£¬½«ÓĞĞ§µÄÊı×Ö´«ÈëclickPoint
+						// è·å–avaListä¸­çš„é•¿åº¦ï¼Œå°†æœ‰æ•ˆçš„æ•°å­—ä¼ å…¥clickPoint
 						clickPoint = avaList[randomNumber(validNumber(avaList))];
 					}
 				else{ clickPoint = gameScanMouse(); }
@@ -468,7 +468,7 @@ int playMain() {
 				}
 				if (queryExsist(avaList, clickPoint)) {
 					chessmanNumber++;
-					// Çå³ı¸¨ÖúÆå×Ó
+					// æ¸…é™¤è¾…åŠ©æ£‹å­
 					for (int cyc = 0; cyc <= avaCoordinateCycle; cyc++) {
 						clearChessman(avaCoordinate[cyc][0], avaCoordinate[cyc][1]);
 					}
@@ -489,7 +489,7 @@ int playMain() {
 			}
 		}
 		else {
-			// ¼ì²é¶Ô·½ÊÇ·ñÒ²ÎŞÆå¿ÉÏÂ
+			// æ£€æŸ¥å¯¹æ–¹æ˜¯å¦ä¹Ÿæ— æ£‹å¯ä¸‹
 			if (player == BLACKPLAYER)checkPlayer = WHITEPLAYER;
 			else { checkPlayer = BLACKPLAYER; }
 			for (int i = 0; i <= 7; i++) {
@@ -514,30 +514,30 @@ int playMain() {
 		else { player = BLACKPLAYER; }
 		blackScore = checkWinner(1);
 		whiteScore = checkWinner(2);
-		//printnumber();  // µ÷ÊÔÓÃ	
+		//printnumber();  // è°ƒè¯•ç”¨	
 	}
-	timeUp = 0;  // ÖØÖÃÊ±¼ä
+	timeUp = 0;  // é‡ç½®æ—¶é—´
 	setfillcolor(CLEARORANGERED);
 	setlinecolor(CLEARORANGE);
 	setlinestyle(PS_SOLID, 7);
 	fillrectangle(715, 300, 1015, 660);
-	settextstyle(50, 0, _T("ºÚÌå"), 0, 0, FW_EXTRABOLD, false, false, false, 0, 0, 0, 0, 0); // ÉèÖÃ×ÖÌåÑùÊ½
+	settextstyle(50, 0, _T("é»‘ä½“"), 0, 0, FW_EXTRABOLD, false, false, false, 0, 0, 0, 0, 0); // è®¾ç½®å­—ä½“æ ·å¼
 	setbkmode(TRANSPARENT);
-	outtextxy(730, 320, "¹§Ï²£¡");
+	outtextxy(730, 320, "æ­å–œï¼");
 	fillrectangle(730, 500, 1000, 600);
 	if (checkWinner(3) == 0) {
-		outtextxy(730, 370, "»ñÊ¤ÕßÊÇ");
-		outtextxy(730, 420, "  ºÚÆåÍæ¼Ò£¡");
+		outtextxy(730, 370, "è·èƒœè€…æ˜¯");
+		outtextxy(730, 420, "  é»‘æ£‹ç©å®¶ï¼");
 	}
 	else if (checkWinner(3) == 1) {
-		outtextxy(730, 370, "»ñÊ¤ÕßÊÇ");
-		outtextxy(730, 420, "  °×ÆåÍæ¼Ò£¡");
+		outtextxy(730, 370, "è·èƒœè€…æ˜¯");
+		outtextxy(730, 420, "  ç™½æ£‹ç©å®¶ï¼");
 	}
 	else {
-		outtextxy(730, 370, "±¾¾ÖÎª");
-		outtextxy(730, 420, "   Æ½¾Ö£¡");
+		outtextxy(730, 370, "æœ¬å±€ä¸º");
+		outtextxy(730, 420, "   å¹³å±€ï¼");
 	}
-	outtextxy(730, 525, "  Ö÷²Ëµ¥");
+	outtextxy(730, 525, "  ä¸»èœå•");
 	endGame = 1;
 	guideScanMouse(730, 1000, 500, 600, 0);
 	resetChessBoard();
@@ -545,20 +545,20 @@ int playMain() {
 	return 0;
 }
 
-// µ¯³ö´°¿Ú
+// å¼¹å‡ºçª—å£
 int guideWindow(char* guide_window, char* title_window, int type) {
 	HWND hnd = GetHWnd();
 	if (type == 0) {
 		MessageBox(hnd, guide_window, title_window, MB_OK);
 	}
 	else if (type == 1) {
-		return MessageBox(hnd, guide_window, "ÓÎÏ·ÌáÊ¾", MB_OKCANCEL);
+		return MessageBox(hnd, guide_window, "æ¸¸æˆæç¤º", MB_OKCANCEL);
 	}
 
 	return 0;
 }
 
-// ÓÎÏ·½Ì³Ì½çÃæ¼ì²âÊó±êÏûÏ¢
+// æ¸¸æˆæ•™ç¨‹ç•Œé¢æ£€æµ‹é¼ æ ‡æ¶ˆæ¯
 int guideScanMouse(int leftx, int rightx, int upy, int bottomy, int type) {
 	ExMessage msg2;
 	IMAGE nextButton;
@@ -579,11 +579,11 @@ int guideScanMouse(int leftx, int rightx, int upy, int bottomy, int type) {
 	return 0;
 }
 
-// ÓÎÏ·½Ì³ÌÖ÷º¯Êı
+// æ¸¸æˆæ•™ç¨‹ä¸»å‡½æ•°
 int guideMain() {
 	IMAGE arrow;
-	char confirm[] = "È·ÈÏÒª¿ªÊ¼ÓÎÏ·½Ì³ÌÂğ£¿";
-	char titleConfirm[] = "ÓÎÏ·ÌáÊ¾";
+	char confirm[] = "ç¡®è®¤è¦å¼€å§‹æ¸¸æˆæ•™ç¨‹å—ï¼Ÿ";
+	char titleConfirm[] = "æ¸¸æˆæç¤º";
 	if (guideWindow(confirm, titleConfirm, 1) == IDCANCEL) {
 		return 1;
 	}
@@ -597,10 +597,10 @@ int guideMain() {
 	setfillcolor(CLEARORANGERED);
 	fillrectangle(715, 300, 1015, 660);
 	settextcolor(WHITE);
-	settextstyle(20, 0, _T("ºÚÌå"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0); // ÉèÖÃ×ÖÌåÑùÊ½
+	settextstyle(20, 0, _T("é»‘ä½“"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0); // è®¾ç½®å­—ä½“æ ·å¼
 	setlinestyle(PS_SOLID, 7);
 	setlinecolor(CLEARORANGE);
-	roundrect(715, 30, 1015, 90, 10, 10);   // »æÖÆÉÏ·½ºÚÆå»ØºÏ
+	roundrect(715, 30, 1015, 90, 10, 10);   // ç»˜åˆ¶ä¸Šæ–¹é»‘æ£‹å›åˆ
 	setbkmode(TRANSPARENT);
 	loadimage(&arrow, "./image/LEFT.png");
 	setfillcolor(CLEARORANGERED);
@@ -608,22 +608,22 @@ int guideMain() {
 	setlinestyle(PS_DOT, 5);
 	chessman(4, 3, AVAILABLE); chessman(3, 4, AVAILABLE);
 	chessman(6, 5, AVAILABLE); chessman(5, 6, AVAILABLE);
-	outtextxy(730, 320, "×ó²àÎªÓÎÏ·ÆåÅÌ£¬Äú½«ÔÚÕâÀï");
-	outtextxy(730, 340, "²Ù×÷Æå×Ó¡£Ã¿´ÎÏÂÆåÇ°»áÓĞ¸¨");
-	outtextxy(730, 360, "ÖúÌáÊ¾£¬¸æÖªÄúÓ¦ÈçºÎÂä×Ó¡£");
-	outtextxy(730, 380, "Ã¿¾ÖÓÎÏ·¿ªÊ¼Ê±£¬»áÓĞËÄ¿Å¹Ì");
-	outtextxy(730, 400, "¶¨Æå×Ó¡£");
+	outtextxy(730, 320, "å·¦ä¾§ä¸ºæ¸¸æˆæ£‹ç›˜ï¼Œæ‚¨å°†åœ¨è¿™é‡Œ");
+	outtextxy(730, 340, "æ“ä½œæ£‹å­ã€‚æ¯æ¬¡ä¸‹æ£‹å‰ä¼šæœ‰è¾…");
+	outtextxy(730, 360, "åŠ©æç¤ºï¼Œå‘ŠçŸ¥æ‚¨åº”å¦‚ä½•è½å­ã€‚");
+	outtextxy(730, 380, "æ¯å±€æ¸¸æˆå¼€å§‹æ—¶ï¼Œä¼šæœ‰å››é¢—å›º");
+	outtextxy(730, 400, "å®šæ£‹å­ã€‚");
 	putimage(830, 500, &arrow);
 	guideScanMouse(760, 960, 550, 650, 1);
 	loadimage(&arrow, "./image/UP.png");
 	setfillcolor(CLEARORANGERED);
 	setlinestyle(PS_SOLID, 7);
 	fillrectangle(715, 300, 1015, 660);
-	outtextxy(730, 320, "ÉÏ²à×ØÉ«²¿·ÖÎªµ±Ç°Íæ¼Ò£¬±»");
-	outtextxy(730, 340, "³ÈÉ«¿òÈ¦ÆğµÄ²¿·ÖÎªÏÂÆåÍæ¼Ò");
-	outtextxy(730, 360, "¡£°×É«¿ò±íÊ¾ËùÊ£ÓàµÄÊ±¼ä£¬");
-	outtextxy(730, 380, "Ã¿¾ÖÓÎÏ·ÓĞ10·ÖÖÓµÄÊ±¼ä£¬µ±");
-	outtextxy(730, 400, "Ê£ÓàÊ±¼äÎªÁãÊ±£¬ÓÎÏ·½áÊø¡£");
+	outtextxy(730, 320, "ä¸Šä¾§æ£•è‰²éƒ¨åˆ†ä¸ºå½“å‰ç©å®¶ï¼Œè¢«");
+	outtextxy(730, 340, "æ©™è‰²æ¡†åœˆèµ·çš„éƒ¨åˆ†ä¸ºä¸‹æ£‹ç©å®¶");
+	outtextxy(730, 360, "ã€‚ç™½è‰²æ¡†è¡¨ç¤ºæ‰€å‰©ä½™çš„æ—¶é—´ï¼Œ");
+	outtextxy(730, 380, "æ¯å±€æ¸¸æˆæœ‰10åˆ†é’Ÿçš„æ—¶é—´ï¼Œå½“");
+	outtextxy(730, 400, "å‰©ä½™æ—¶é—´ä¸ºé›¶æ—¶ï¼Œæ¸¸æˆç»“æŸã€‚");
 	putimage(830, 500, &arrow);
 	guideScanMouse(760, 960, 550, 650, 1);
 	loadimage(&arrow, "./image/LEFT.png");
@@ -631,7 +631,7 @@ int guideMain() {
 	setlinestyle(PS_SOLID, 7);
 	fillrectangle(715, 300, 1015, 660);	
 	putimage(830, 500, &arrow);
-	outtextxy(730, 320, "Çëµã»÷×ó²àÆåÅÌÖĞµÄ3D¸ñ×Ó¡£");
+	outtextxy(730, 320, "è¯·ç‚¹å‡»å·¦ä¾§æ£‹ç›˜ä¸­çš„3Dæ ¼å­ã€‚");
 	guideScanMouse(260, 340, 180, 260, 0);
 	chessman(4, 3, BLACKPLAYER); chessman(4, 4, BLACKPLAYER);
 	clearChessman(3, 4); clearChessman(6, 5); clearChessman(5, 6);
@@ -644,15 +644,15 @@ int guideMain() {
 	setlinestyle(PS_SOLID, 7);
 	setlinecolor(CLEARORANGE);
 	setfillcolor(CLEARORANGERED);
-	settextstyle(20, 0, _T("ºÚÌå"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0);
+	settextstyle(20, 0, _T("é»‘ä½“"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0);
 	roundrect(715, 90, 1015, 150, 10, 10);
 	fillrectangle(715, 300, 1015, 660);
 	chessman(5, 3, AVAILABLE); chessman(3, 5, AVAILABLE); chessman(3, 3, AVAILABLE);
-	outtextxy(730, 320, "¹§Ï²£¡Äú³É¹¦µÄÍê³ÉÁËµÚÒ»²½");
-	outtextxy(730, 340, "¡£ÉÏ·½µÄ³ÈÉ«¿òÒÆ¶¯µ½ÁË°×Æå");
-	outtextxy(730, 360, "µÄÎ»ÖÃ£¬Õâ±íÊ¾ÏÖÔÚÊÇ°×ÆåÍæ");
-	outtextxy(730, 380, "¼ÒµÄÂä×ÓÊ±¼ä¡£ÎÒÃÇ¿´¿´°×Æå");
-	outtextxy(730, 400, "ÈçºÎ²Ù×÷¡£");
+	outtextxy(730, 320, "æ­å–œï¼æ‚¨æˆåŠŸçš„å®Œæˆäº†ç¬¬ä¸€æ­¥");
+	outtextxy(730, 340, "ã€‚ä¸Šæ–¹çš„æ©™è‰²æ¡†ç§»åŠ¨åˆ°äº†ç™½æ£‹");
+	outtextxy(730, 360, "çš„ä½ç½®ï¼Œè¿™è¡¨ç¤ºç°åœ¨æ˜¯ç™½æ£‹ç©");
+	outtextxy(730, 380, "å®¶çš„è½å­æ—¶é—´ã€‚æˆ‘ä»¬çœ‹çœ‹ç™½æ£‹");
+	outtextxy(730, 400, "å¦‚ä½•æ“ä½œã€‚");
 	putimage(830, 500, &arrow);
 	guideScanMouse(760, 960, 550, 650, 1);
 	chessman(3, 3, WHITEPLAYER); clearChessman(5, 3); clearChessman(3, 5); chessman(4, 4, WHITEPLAYER);
@@ -661,9 +661,9 @@ int guideMain() {
 	setlinestyle(PS_SOLID, 7);
 	setlinecolor(CLEARORANGE);
 	fillrectangle(715, 300, 1015, 660);
-	outtextxy(730, 320, "¹§Ï²£¡ÄúÒÑÍê³ÉÁË±¾½Ì³ÌµÄËù");
-	outtextxy(730, 340, "ÓĞÄÚÈİ¡£µã»÷ÏÂÃæµÄ¡°ÏÂÒ»²½");
-	outtextxy(730, 360, "¡±°´Å¥¼´¿ÉÍË³ö±¾½Ì³Ì¡£");
+	outtextxy(730, 320, "æ­å–œï¼æ‚¨å·²å®Œæˆäº†æœ¬æ•™ç¨‹çš„æ‰€");
+	outtextxy(730, 340, "æœ‰å†…å®¹ã€‚ç‚¹å‡»ä¸‹é¢çš„â€œä¸‹ä¸€æ­¥");
+	outtextxy(730, 360, "â€æŒ‰é’®å³å¯é€€å‡ºæœ¬æ•™ç¨‹ã€‚");
 	putimage(830, 500, &arrow);
 	guideScanMouse(760, 960, 550, 650, 1);
 	return 0;
@@ -674,14 +674,14 @@ int main()
 	
 	initgraph(1024, 680);
 	HWND title_Main = GetHWnd();
-	SetWindowText(title_Main, "ReversiºÚ°×Æå");  // ĞŞ¸Ä´°¿Ú±êÌâ
+	SetWindowText(title_Main, "Reversié»‘ç™½æ£‹");  // ä¿®æ”¹çª—å£æ ‡é¢˜
 	mciSendString("open ./music/clickButton.mp3 alias Button", 0, 0, 0);
 	mciSendString("open ./music/backGroundMusic.mp3 alias BGM", 0, 0, 0);
 	mciSendString("play BGM repeat", 0, 0, 0);
 	while (1) {
 		checkerBoard();
 
-		// ÓÎÏ·²Ëµ¥
+		// æ¸¸æˆèœå•
 		switch (startMenu()) {
 		case 1:
 			mciSendString("close Button", 0, 0, 0);
