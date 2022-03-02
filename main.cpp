@@ -229,18 +229,28 @@ int playerShow() {
 	return 0;
 }
 
+// 玩家名称对话框
+void inputPlayerName(int score) {
+	char name[20];
+	InputBox(name, 20, "请输入玩家名称(仅使用英文字母或数字)");
+	// refreshRankFile(score, name);
+}
+
+
 // 绘制游戏菜单
 int startMenu() {
 	ExMessage msg;
 
-	IMAGE startGame, gameGuide, AImode;
+	IMAGE startGame, gameGuide, AImode, rankList;
 	loadimage(&startGame, "./image/start.png");
 	loadimage(&gameGuide, "./image/guide.png");
 	loadimage(&AImode, "./image/AImode.png");
+	loadimage(&rankList, "./image/ranklist.png");
 
 	putimage(715, 170, &startGame);
 	putimage(715, 310, &gameGuide);
 	putimage(715, 450, &AImode);
+	putimage(715, 590, &rankList);
 	while (1) {
 		if (peekmessage(&msg, EM_MOUSE)) {
 			switch (msg.message) {
@@ -257,9 +267,13 @@ int startMenu() {
 				else if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 450 && msg.y <= 570) {   // 判断鼠标是否位于“人机对战”
 					loadimage(&AImode, "./image/AImode_on.png");
 				}
+				else if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 590 && msg.y <= 650) {   // 判断鼠标是否位于"排行榜"
+					loadimage(&rankList, "./image/ranklist_on.png");
+				}
 				putimage(715, 170, &startGame);
 				putimage(715, 310, &gameGuide);
 				putimage(715, 450, &AImode);
+				putimage(715, 590, &rankList);
 				break;
 			case WM_LBUTTONDOWN:
 				if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 170 && msg.y <= 290) {        
@@ -270,6 +284,9 @@ int startMenu() {
 				}
 				else if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 450 && msg.y <= 570) {
 					return 3;   // 按下“人机对战”执行操作3
+				}
+				else if (msg.x >= 715 && msg.x <= 1015 && msg.y >= 590 && msg.y <= 650) {
+					return 4;   // 按下“排行榜”执行操作4
 				}
 			}
 		}
@@ -418,7 +435,7 @@ int playMain() {
 	IMAGE playerImage;
 	loadimage(&playerImage, "./image/player.png");
 	int player = 0, checkPlayer = 1, onGame = 1;              // 黑方先手
-	int chessmanNumber = 4, blackScore = 2, whiteScore = 2;   // 积分计算与显示相关变量
+	int blackScore = 2, whiteScore = 2;                       // 积分计算与显示相关变量
 	int avaList[20] = {}, avaCoordinate[20][2] = {};
 	int avaListCycle = 0, avaCoordinateCycle = 0;
 	int number, clickPoint = 0;
@@ -437,6 +454,12 @@ int playMain() {
 		setlinecolor(CLEARORANGE);		
 		if (player == BLACKPLAYER) roundrect(715, 30, 1015, 90, 10, 10);
 		else if (player == WHITEPLAYER) roundrect(715, 90, 1015, 150, 10, 10);
+		setfillcolor(WHITE);
+		setlinecolor(WHITE);
+		setlinestyle(PS_SOLID, 7);
+		fillroundrect(715, 220, 1015, 260, 10, 10);
+		outtextxy(730, 235, "黑棋：");
+		outtextxy(850, 235, "白棋：");
 		outtextxy(785, 235, (char)(blackScore / 10 + 48));
 		outtextxy(800, 235, (char)(blackScore % 10 + 48));
 		outtextxy(905, 235, (char)(whiteScore / 10 + 48));
@@ -528,6 +551,8 @@ int playMain() {
 	if (checkWinner(3) == 0) {
 		outtextxy(730, 370, "获胜者是");
 		outtextxy(730, 420, "  黑棋玩家！");
+		endGame = 1;
+		if(aiMode)inputPlayerName(blackScore);
 	}
 	else if (checkWinner(3) == 1) {
 		outtextxy(730, 370, "获胜者是");
@@ -669,6 +694,40 @@ int guideMain() {
 	return 0;
 }
 
+// 排行榜
+int rankListShow() {
+	IMAGE bg;
+	loadimage(&bg, "./image/ranklistbg.png");
+	putimage(0, 0, &bg);
+	setbkmode(TRANSPARENT);
+	settextcolor(WHITE);
+	settextstyle(20, 0, _T("黑体"), 0, 0, FW_BOLD, false, false, false, 0, 0, 0, 0, 0); // 设置字体样式
+	rankList();
+	for (int i = 0; i < 10; i++) {
+		if (gainPlayerClass(i) == 0)break;
+		char a[4];
+		if (i != 9) outtextxy(30, 95+i*57, (char)(i+49));
+		else {
+			outtextxy(30, 95 + i * 57, (char)(49));
+			outtextxy(38, 95 + i * 57, (char)(48));
+		}
+
+		outtextxy(60, 95 + i * 57, gainPlayerName(i));    // 显示玩家名
+		itoa(gainPlayerClass(i), a, 10);
+		outtextxy(300, 95 + i * 57, a);                   // 显示玩家对局数
+		strcpy(a, "");
+		itoa(gainPlayerScore(i), a, 10);
+		outtextxy(500, 95 + i * 57, a);                   // 显示玩家得分
+
+
+
+	}
+
+	guideScanMouse(0, 1024, 647, 680, 0);
+	return 0;
+}
+
+
 int main()
 {
 	
@@ -704,6 +763,12 @@ int main()
 			playerShow();
 			playMain();
 			aiMode = 0;
+			break;
+		case 4:
+			mciSendString("close Button", 0, 0, 0);
+			mciSendString("open ./music/clickButton.mp3 alias Button", 0, 0, 0);
+			mciSendString("play Button", 0, 0, 0);
+			rankListShow();
 			break;
 		}
 }
